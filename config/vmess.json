@@ -1,24 +1,12 @@
-{  
+{
   "dns": {
     "hosts": {
       "domain:googleapis.cn": "googleapis.com"
     },
     "servers": [
-      {
-        "address": "fakedns",
-        "domains": [
-          "geosite:cn"
-        ]
-      },
       "8.8.8.8"
     ]
   },
-  "fakedns": [
-    {
-      "ipPool": "198.18.0.0/15",
-      "poolSize": 10000
-    }
-  ],
   "inbounds": [
     {
       "listen": "127.0.0.1",
@@ -32,8 +20,7 @@
       "sniffing": {
         "destOverride": [
           "http",
-          "tls",
-          "fakedns"
+          "tls"
         ],
         "enabled": true,
         "routeOnly": false
@@ -48,17 +35,6 @@
         "userLevel": 8
       },
       "tag": "http"
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10853,
-      "protocol": "dokodemo-door",
-      "settings": {
-        "address": "8.8.8.8",
-        "network": "tcp,udp",
-        "port": 53
-      },
-      "tag": "dns-in"
     }
   ],
   "log": {
@@ -76,7 +52,7 @@
       "settings": {
         "vnext": [
           {
-            "address": "localhost",
+            "address": "quiz.vidio.com",
             "port": 443,
             "users": [
               {
@@ -85,7 +61,7 @@
                 "flow": "",
                 "id": "0fbf4f81-2598-4b6a-a623-0ead4cb9efa8",
                 "level": 8,
-                "security": "auto"
+                "security": "zero"
               }
             ]
           }
@@ -98,14 +74,14 @@
           "allowInsecure": true,
           "fingerprint": "random",
           "publicKey": "",
-          "serverName": "localhost",
+          "serverName": "vmesscf.kodenul.my.id",
           "shortId": "",
           "show": false,
           "spiderX": ""
         },
         "wsSettings": {
           "headers": {
-            "Host": "localhost"
+            "Host": "vmesscf.kodenul.my.id"
           },
           "path": "/"
         }
@@ -114,9 +90,7 @@
     },
     {
       "protocol": "freedom",
-      "settings": {
-        "domainStrategy": "UseIP"
-      },
+      "settings": {},
       "tag": "direct"
     },
     {
@@ -127,10 +101,6 @@
         }
       },
       "tag": "block"
-    },
-    {
-      "protocol": "dns",
-      "tag": "dns-out"
     }
   ],
   "policy": {
@@ -150,13 +120,6 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      {
-        "inboundTag": [
-          "dns-in"
-        ],
-        "outboundTag": "dns-out",
-        "type": "field"
-      },
       {
         "ip": [
           "8.8.8.8"
