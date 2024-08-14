@@ -1,73 +1,63 @@
 {
-  "dns": {
-    "hosts": {
-      "domain:googleapis.cn": "googleapis.com"
-    },
-    "servers": [
-      "8.8.8.8"
-    ]
+  "log": {
+    "access": "",
+    "error": "",
+    "loglevel": "warning"
   },
-  "fakedns": [
-    {
-      "ipPool": "198.18.0.0/15",
-      "poolSize": 10000
-    }
-  ],
   "inbounds": [
     {
-      "listen": "127.0.0.1",
+      "tag": "socks",
       "port": 10808,
+      "listen": "0.0.0.0",
       "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
+      },
       "settings": {
         "auth": "noauth",
         "udp": true,
-        "userLevel": 8
-      },
-      "sniffing": {
-        "destOverride": [
-          "http",
-          "tls",
-          "fakedns"
-        ],
-        "enabled": true,
-        "routeOnly": false
-      },
-      "tag": "socks"
+        "allowTransparent": false
+      }
     },
     {
-      "listen": "127.0.0.1",
+      "tag": "http",
       "port": 10809,
+      "listen": "0.0.0.0",
       "protocol": "http",
-      "settings": {
-        "userLevel": 8
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
       },
-      "tag": "http"
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
     }
   ],
-  "log": {
-    "loglevel": "warning"
-  },
   "outbounds": [
     {
-      "mux": {
-        "concurrency": -1,
-        "enabled": false,
-        "xudpConcurrency": 8,
-        "xudpProxyUDP443": ""
-      },
+      "tag": "proxy",
       "protocol": "vmess",
       "settings": {
         "vnext": [
           {
-            "address": "quiz.vidio.com",
+            "address": "lipcon.com",
             "port": 443,
             "users": [
               {
-                "alterId": 0,
-                "encryption": "",
-                "flow": "",
                 "id": "0fbf4f81-2598-4b6a-a623-0ead4cb9efa8",
-                "level": 8,
+                "alterId": 0,
+                "email": "t@t.tt",
                 "security": "zero"
               }
             ]
@@ -79,65 +69,83 @@
         "security": "tls",
         "tlsSettings": {
           "allowInsecure": true,
-          "fingerprint": "",
-          "publicKey": "",
-          "serverName": "vmesscf.kodenul.my.id",
-          "shortId": "",
-          "show": false,
-          "spiderX": ""
+          "serverName": "myvmess.kodenul.my.id"
         },
         "wsSettings": {
+          "path": "/",
           "headers": {
-            "Host": "vmesscf.kodenul.my.id"
-          },
-          "path": "/"
+            "Host": "myvmess.kodenul.my.id"
+          }
         }
       },
-      "tag": "proxy"
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
     },
     {
+      "tag": "direct",
       "protocol": "freedom",
-      "settings": {
-        "domainStrategy": "UseIP"
-      },
-      "tag": "direct"
+      "settings": {}
     },
     {
+      "tag": "block",
       "protocol": "blackhole",
       "settings": {
         "response": {
           "type": "http"
         }
-      },
-      "tag": "block"
+      }
     }
   ],
-  "policy": {
-    "levels": {
-      "8": {
-        "connIdle": 300,
-        "downlinkOnly": 1,
-        "handshake": 4,
-        "uplinkOnly": 1
-      }
+  "dns": {
+    "hosts": {
+      "dns.google": "8.8.8.8",
+      "proxy.example.com": "127.0.0.1"
     },
-    "system": {
-      "statsOutboundUplink": true,
-      "statsOutboundDownlink": true
-    }
-  },
-  "routing": {
-    "domainStrategy": "IPIfNonMatch",
-    "rules": [
+    "servers": [
       {
-        "ip": [
-          "8.8.8.8"
+        "address": "223.5.5.5",
+        "domains": [
+          "lipcon.com"
+        ]
+      },
+      {
+        "address": "223.5.5.5",
+        "domains": [
+          "geosite:cn",
+          "geosite:geolocation-cn"
         ],
-        "outboundTag": "proxy",
-        "port": "53",
-        "type": "field"
-      }
+        "expectIPs": [
+          "geoip:cn"
+        ]
+      },
+      "1.1.1.1",
+      "8.8.8.8",
+      "https://dns.google/dns-query"
     ]
   },
-  "stats": {}
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api"
+      },
+      {
+        "type": "field",
+        "port": "443",
+        "network": "udp",
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "port": "0-65535",
+        "outboundTag": "proxy"
+      }
+    ]
+  }
 }
