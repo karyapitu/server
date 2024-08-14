@@ -7,6 +7,12 @@
       "8.8.8.8"
     ]
   },
+  "fakedns": [
+    {
+      "ipPool": "198.18.0.0/15",
+      "poolSize": 10000
+    }
+  ],
   "inbounds": [
     {
       "listen": "127.0.0.1",
@@ -20,7 +26,8 @@
       "sniffing": {
         "destOverride": [
           "http",
-          "tls"
+          "tls",
+          "fakedns"
         ],
         "enabled": true,
         "routeOnly": false
@@ -72,7 +79,7 @@
         "security": "tls",
         "tlsSettings": {
           "allowInsecure": true,
-          "fingerprint": "random",
+          "fingerprint": "",
           "publicKey": "",
           "serverName": "vmesscf.kodenul.my.id",
           "shortId": "",
@@ -90,7 +97,9 @@
     },
     {
       "protocol": "freedom",
-      "settings": {},
+      "settings": {
+        "domainStrategy": "UseIP"
+      },
       "tag": "direct"
     },
     {
